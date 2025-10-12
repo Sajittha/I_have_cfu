@@ -1,10 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
 <head>
     <meta charset="UTF-8">
     <title>Computer Shop</title>
 </head>
 <body>
+    <div style="text-align: right; padding: 10px; border-bottom: 1px solid #ccc; margin-bottom: 20px;">
+        <div sec:authorize="isAuthenticated()">
+            <span>
+                Welcome, <b sec:authentication="name">[Username]</b> |
+            </span>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" style="background:none; border:none; color:blue; cursor:pointer; text-decoration:underline;">Logout</button>
+            </form>
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}">Login</a> |
+            <a th:href="@{/register}">Register</a>
+        </div>
+    </div>
+
     <h1>Product Management</h1>
     <a th:href="@{/showNewProductForm}">Add New Product</a>
     <hr>
