@@ -13,12 +13,15 @@ public class CartItemDto {
     private String productName;
     private double price;
     private int quantity;
+    private String imageUrl; 
 
+    // แก้ไข constructor ให้ดึง imageUrl มาจาก Product ด้วย
     public CartItemDto(Product product, int quantity) {
         this.productId = product.getId();
         this.productName = product.getName();
         this.price = product.getPrice();
         this.quantity = quantity;
+        this.imageUrl = product.getImageUrl(); 
     }
 
     public double getTotalPrice() {

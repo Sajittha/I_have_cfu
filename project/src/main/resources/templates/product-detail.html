@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="th" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - TechShop'"></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a th:href="@{/}" class="text-2xl font-bold">🖥️ TechShop</a>
+                <div class="flex items-center space-x-4">
+                    <a th:href="@{/cart}" class="relative bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg transition-colors">🛒 ตะกร้า</a>
+                    <a th:href="@{/}" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">กลับสู่หน้าหลัก</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 py-12">
+        <div class="bg-white rounded-lg shadow-xl p-8 flex flex-col md:flex-row gap-8">
+            <div class="md:w-1/2">
+                <img th:src="${product.imageUrl}" alt="Product Image" class="w-full h-auto rounded-lg object-contain">
+            </div>
+
+            <div class="md:w-1/2 flex flex-col">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4" th:text="${product.name}"></h1>
+                <p class="text-4xl font-bold text-green-600 mb-6" th:text="'฿' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}"></p>
+
+                <div class="border-t pt-4 mb-6">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-3">คุณสมบัติ</h2>
+                    <ul class="space-y-2 text-gray-600">
+                        <li th:if="${product.productDetail != null and product.productDetail.cpu != null and !product.productDetail.cpu.isEmpty()}"><strong>CPU:</strong> <span th:text="${product.productDetail.cpu}"></span></li>
+                        <li th:if="${product.productDetail != null and product.productDetail.ram != null and !product.productDetail.ram.isEmpty()}"><strong>RAM:</strong> <span th:text="${product.productDetail.ram}"></span></li>
+                        <li th:if="${product.productDetail != null and product.productDetail.storage != null and !product.productDetail.storage.isEmpty()}"><strong>Storage:</strong> <span th:text="${product.productDetail.storage}"></span></li>
+                        <li th:if="${product.productDetail != null and product.productDetail.gpu != null and !product.productDetail.gpu.isEmpty()}"><strong>GPU:</strong> <span th:text="${product.productDetail.gpu}"></span></li>
+                    </ul>
+                </div>
+                
+                <div class="mt-auto">
+                    <a th:href="@{/cart/add/{id}(id=${product.id})}" class="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-colors font-semibold text-lg block">เพิ่มลงตะกร้า</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

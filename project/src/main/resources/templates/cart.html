@@ -1,37 +1,76 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head><title>Shopping Cart</title></head>
-<body>
-    <h1>Your Shopping Cart</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="item : ${cartItems}">
-                <td th:text="${item.productName}"></td>
-                <td th:text="${item.price}"></td>
-                <td>
-                    <form th:action="@{/cart/update}" method="post">
+<html lang="th" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - TechShop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a th:href="@{/}" class="text-2xl font-bold">🖥️ TechShop</a>
+                <a th:href="@{/}" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">
+                    กลับสู่หน้าหลัก
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">ตะกร้าสินค้าของคุณ 🛒</h1>
+
+        <div th:if="${cartItems.isEmpty()}" class="bg-white rounded-lg shadow-lg p-8 text-center">
+            <h2 class="text-2xl text-gray-500 mb-4">ตะกร้าของคุณว่างเปล่า</h2>
+            <p class="text-gray-400 mb-6">ลองเพิ่มสินค้าที่น่าสนใจลงในตะกร้าสิ!</p>
+            <a th:href="@{/}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors">
+                เลือกซื้อสินค้าต่อ
+            </a>
+        </div>
+
+        <div th:unless="${cartItems.isEmpty()}" class="flex flex-col lg:flex-row gap-8">
+            
+            <div class="lg:w-2/3 bg-white rounded-lg shadow-lg p-6 space-y-4">
+                <div th:each="item : ${cartItems}" class="flex items-center space-x-4 border-b border-gray-200 pb-4 last:border-b-0">
+                    
+                    <img th:src="${item.imageUrl}" alt="Product Image" class="w-20 h-20 object-contain rounded-md bg-gray-200">
+                    
+                    <div class="flex-1">
+                        <a th:href="@{/product/{id}(id=${item.productId})}" class="hover:underline">
+                            <h3 class="font-semibold text-lg text-gray-800" th:text="${item.productName}"></h3>
+                        </a>
+                        <p class="text-green-600 font-bold" th:text="'฿' + ${#numbers.formatDecimal(item.price, 0, 'COMMA', 2, 'POINT')}"></p>
+                    </div>
+                    
+                    <form th:action="@{/cart/update}" method="post" class="flex items-center space-x-2">
                         <input type="hidden" name="productId" th:value="${item.productId}" />
-                        <input type="number" name="quantity" th:value="${item.quantity}" min="1" style="width: 50px;" />
-                        <button type="submit">Update</button>
+                        <input type="number" name="quantity" th:value="${item.quantity}" min="1" class="w-16 border border-gray-300 rounded-lg text-center"/>
+                        <button type="submit" class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm">อัปเดต</button>
                     </form>
-                </td>
-                <td th:text="${item.totalPrice}"></td>
-                <td>
-                    <a th:href="@{/cart/remove/{productId}(productId=${item.productId})}">Remove</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <h2>Total Price: $<span th:text="${totalPrice}">0.00</span></h2>
-    <a th:href="@{/}">Continue Shopping</a>
+                    
+                    <p class="font-bold w-24 text-right" th:text="'฿' + ${#numbers.formatDecimal(item.totalPrice, 0, 'COMMA', 2, 'POINT')}"></p>
+                    
+                    <a th:href="@{/cart/remove/{productId}(productId=${item.productId})}" class="text-red-500 hover:text-red-700 text-2xl">🗑️</a>
+                </div>
+            </div>
+
+            <div class="lg:w-1/3">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-28">
+                    <h2 class="text-xl font-bold border-b pb-4 mb-4">สรุปรายการสั่งซื้อ</h2>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-lg font-semibold">รวมทั้งหมด:</span>
+                        <span class="text-2xl font-bold text-green-600" th:text="'฿' + ${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 2, 'POINT')}"></span>
+                    </div>
+                    <button class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition-colors font-semibold">
+                        ชำระเงิน
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </body>
 </html>

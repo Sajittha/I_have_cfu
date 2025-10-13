@@ -1,48 +1,66 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<html lang="th" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
 <head>
     <meta charset="UTF-8">
-    <title>Computer Shop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechShop - ร้านขายคอมพิวเตอร์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        a.card-link { text-decoration: none; color: inherit; }
+    </style>
 </head>
-<body>
-    <div style="text-align: right; padding: 10px; border-bottom: 1px solid #ccc; margin-bottom: 20px;">
-        <div sec:authorize="isAuthenticated()">
-            <span>Welcome, <b sec:authentication="name"></b> |</span>
-            <form th:action="@{/logout}" method="post" style="display:inline;"><button type="submit">Logout</button></form>
+<body class="bg-gray-100">
+
+    <nav class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a th:href="@{/}" class="text-2xl font-bold">🖥️ TechShop</a>
+                <div class="flex items-center space-x-4">
+                    <a th:href="@{/admin}" sec:authorize="hasRole('ADMIN')" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">จัดการสินค้า</a>
+                    <a th:href="@{/cart}" class="relative bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg transition-colors">
+                        🛒 ตะกร้า
+                        <span th:if="${session.shoppingCartService != null && !session.shoppingCartService.cartItems.isEmpty()}"
+                              class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                              th:text="${session.shoppingCartService.cartItems.size()}"></span>
+                    </a>
+                    <div sec:authorize="isAuthenticated()" class="flex items-center space-x-2">
+                        <span class="font-semibold" th:text="'สวัสดี, ' + ${#authentication.name}"></span>
+                        <form th:action="@{/logout}" method="post"><button type="submit" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg transition-colors">Logout</button></form>
+                    </div>
+                    <a th:href="@{/login}" sec:authorize="!isAuthenticated()" class="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-lg transition-colors">เข้าสู่ระบบ</a>
+                </div>
+            </div>
         </div>
-        <div sec:authorize="!isAuthenticated()">
-            <a th:href="@{/login}">Login</a> | <a th:href="@{/register}">Register</a>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">ยินดีต้อนรับสู่ TechShop</h2>
+            <p class="text-xl text-gray-600">ร้านขายคอมพิวเตอร์และอุปกรณ์ไอทีคุณภาพสูง</p>
+        </div>
+
+        <div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-6">สินค้าทั้งหมด</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <a th:each="product : ${listProducts}" th:href="@{/product/{id}(id=${product.id})}" 
+                   class="card-link bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 flex flex-col fade-in">
+                    <div class="p-6 text-center flex-grow flex flex-col">
+                        <img th:src="${product.imageUrl}" alt="Product Image" class="w-full h-48 object-contain mb-4">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2 h-12" th:text="${product.name}"></h4>
+                        <div class="flex justify-between items-center mt-auto pt-4">
+                            <span class="text-2xl font-bold text-green-600" th:text="'฿' + ${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}"></span>
+                            <span class="bg-blue-600 text-white px-4 py-2 rounded-lg">ดูรายละเอียด</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 
-    <div style="margin-bottom: 20px;">
-        <a th:href="@{/cart}" style="font-size: 1.2em; font-weight: bold;">🛒 View Cart</a>
-    </div>
-
-    <h1>Product Management</h1>
-    <a th:href="@{/showNewProductForm}">Add New Product</a>
-    <hr>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="product : ${listProducts}">
-                <td th:text="${product.name}"></td>
-                <td th:text="${product.price}"></td>
-                <td>
-                    <a th:href="@{/showFormForUpdate/{id}(id=${product.id})}">Update</a>
-                    |
-                    <a th:href="@{/deleteProduct/{id}(id=${product.id})}">Delete</a>
-                    |
-                    <a th:href="@{/cart/add/{id}(id=${product.id})}"><b>Add to Cart</b></a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 </body>
 </html>
