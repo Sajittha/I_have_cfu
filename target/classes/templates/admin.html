@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - I HAVE CFu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+
+    <nav class="bg-blue-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a th:href="@{/}" class="text-2xl font-bold">🖥️ I HAVE CFu</a>
+                <a th:href="@{/}" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-lg transition-colors">กลับสู่หน้าหลัก</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h3 class="text-3xl font-bold text-gray-800 mb-6">จัดการสินค้า</h3>
+            
+            <div class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
+                <h4 class="text-xl font-semibold mb-4 text-gray-700">เพิ่ม / แก้ไข สินค้า</h4>
+                <form th:action="@{/saveProduct}" th:object="${product}" method="post" class="space-y-4">
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:field="*{productDetail.id}" />
+
+                    <div>
+                        <label class="block mb-1 font-semibold text-gray-600">ชื่อสินค้า:</label>
+                        <input type="text" th:field="*{name}" placeholder="เช่น MacBook Pro M3" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-semibold text-gray-600">ราคา:</label>
+                        <input type="number" th:field="*{price}" step="0.01" placeholder="เช่น 65900" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block mb-1 font-semibold text-gray-600">URL รูปภาพ:</label>
+                        <input type="text" th:field="*{imageUrl}" placeholder="https://..." class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    </div>
+                    
+                    <hr>
+                    <h5 class="text-lg font-semibold text-gray-700">รายละเอียดสเปก</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1 font-semibold text-gray-600">CPU:</label>
+                            <input type="text" th:field="*{productDetail.cpu}" placeholder="เช่น Intel Core i9" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-semibold text-gray-600">RAM:</label>
+                            <input type="text" th:field="*{productDetail.ram}" placeholder="เช่น 16GB DDR5" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-semibold text-gray-600">Storage:</label>
+                            <input type="text" th:field="*{productDetail.storage}" placeholder="เช่น 1TB NVMe SSD" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block mb-1 font-semibold text-gray-600">GPU (การ์ดจอ):</label>
+                            <input type="text" th:field="*{productDetail.gpu}" placeholder="เช่น RTX 4080" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold">บันทึกสินค้า</button>
+                </form>
+            </div>
+
+            <div class="overflow-x-auto">
+                 <h4 class="text-xl font-semibold mb-4 text-gray-700">รายการสินค้าทั้งหมด</h4>
+                <table class="min-w-full bg-white">
+                    <thead class="bg-gray-800 text-white">
+                        <tr>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">ชื่อสินค้า</th>
+                            <th class="text-left py-3 px-4 uppercase font-semibold text-sm">ราคา</th>
+                            <th class="text-center py-3 px-4 uppercase font-semibold text-sm">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-700">
+                        <tr th:each="p : ${listProducts}" class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-4" th:text="${p.name}"></td>
+                            <td class="py-3 px-4" th:text="'฿' + ${#numbers.formatDecimal(p.price, 0, 'COMMA', 2, 'POINT')}"></td>
+                            <td class="py-3 px-4 text-center">
+                                <a th:href="@{/showFormForUpdate/{id}(id=${p.id})}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm inline-block">แก้ไข</a>
+                                <a th:href="@{/deleteProduct/{id}(id=${p.id})}" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm inline-block" onclick="return confirm('คุณต้องการลบสินค้านี้ใช่หรือไม่?');">ลบ</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

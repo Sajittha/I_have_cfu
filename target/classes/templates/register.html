@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="th" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - I HAVE CFu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen py-12">
+
+    <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4">
+        <div class="text-center mb-6">
+             <a th:href="@{/}" class="text-2xl font-bold text-blue-900 no-underline">🖥️ I HAVE CFu</a>
+            <h3 class="text-2xl font-bold text-gray-800 mt-4">สมัครสมาชิก</h3>
+        </div>
+
+        <form th:action="@{/register}" th:object="${user}" method="post" class="space-y-4">
+            <input type="text" th:field="*{username}" placeholder="Username" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" required>
+            <input type="password" th:field="*{password}" placeholder="รหัสผ่าน" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500" required>
+            
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg transition-colors font-semibold">
+                สมัครสมาชิก
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a th:href="@{/login}" class="text-blue-600 hover:text-blue-700">
+                มีบัญชีแล้ว? เข้าสู่ระบบ
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
