@@ -20,13 +20,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(authorize -> authorize
-                // อนุญาตให้ทุกคนเข้าถึงหน้าเหล่านี้ได้โดยไม่ต้อง Login
-                .requestMatchers("/", "/register", "/api/**", "/css/**", "/js/**").permitAll()
-                // หน้าอื่นๆ ทั้งหมด ต้องมีการยืนยันตัวตน (Login) ก่อน
-                .anyRequest().authenticated()
-            )
+    http
+        .authorizeHttpRequests(authorize -> authorize
+            // เพิ่มบรรทัดนี้เข้ามา
+            .requestMatchers("/admin/**").hasRole("ADMIN")
+            // อนุญาตให้ทุกคนเข้าถึงหน้าเหล่านี้ได้โดยไม่ต้อง Login
+            // ผมเพิ่ม "/product/**" เข้าไปด้วยเพื่อให้คนไม่ login ดูรายละเอียดสินค้าได้
+            .requestMatchers("/", "/register", "/product/**", "/api/**", "/css/**", "/js/**").permitAll()
+            // หน้าอื่นๆ ทั้งหมด ต้องมีการยืนยันตัวตน (Login) ก่อน
+            .anyRequest().authenticated()
+        )
             .formLogin(form -> form
                 // กำหนดหน้า Login ของเราเอง
                 .loginPage("/login")
